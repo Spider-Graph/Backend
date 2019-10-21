@@ -7,6 +7,12 @@ import { MongoRepository } from 'typeorm';
 import { CredentialsDTO, LoginResponseDTO, UserDetailsDTO, UserDTO } from '../../../interfaces';
 import { User } from './user.entity';
 
+interface Token {
+  issuer: string;
+  subject: string;
+  audience: string;
+}
+
 @Injectable()
 export class UserService {
   constructor(
@@ -37,13 +43,7 @@ export class UserService {
 
   async update(user: User, details: UserDetailsDTO): Promise<boolean> {
     const { username, password, email } = details;
-    const update = {
-      ...user,
-      username,
-      password,
-      email,
-    };
-
+    const update = { ...user, username, password, email };
     return !!(await this.userRepository.save(update));
   }
 
@@ -84,10 +84,4 @@ export class UserService {
       return null;
     }
   }
-}
-
-interface Token {
-  issuer: string;
-  subject: string;
-  audience: string;
 }

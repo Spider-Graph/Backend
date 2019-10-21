@@ -45,13 +45,13 @@ export class User extends UserDTO {
   updatedAt: string;
 
   @BeforeInsert()
-  async beforeInsert() {
+  async beforeInsert?() {
     this.id = uuid.v1();
     this.password = await bcrypt.hash(this.password, 10);
   }
 
   @BeforeUpdate()
-  async beforeUpdate() {
+  async beforeUpdate?() {
     this.password = await bcrypt.hash(this.password, 10);
   }
 
