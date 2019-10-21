@@ -1,0 +1,32 @@
+directive @isAuthenticated on FIELD | FIELD_DEFINITION
+
+input Credentials {
+  username: String!
+  password: String!
+}
+
+input UserDetails {
+  username: String!
+  password: String!
+  email: String!
+}
+
+type LoginResponse {
+  token: String!
+}
+
+type User {
+  username: String!
+  email: String!
+}
+
+type Query {
+  me: User @isAuthenticated
+}
+
+type Mutation {
+  login(credentials: Credentials!): LoginResponse
+  register(details: UserDetails!): LoginResponse
+  updateUser(details: UserDetails!): Boolean @isAuthenticated
+  deleteUser: Boolean @isAuthenticated
+}

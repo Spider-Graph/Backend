@@ -1,0 +1,101 @@
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+
+import { ChangeChartDTO, ChangeDatasetDTO } from '../../../interfaces';
+import { User } from '../user/user.entity';
+import { Chart, Dataset } from './chart.entity';
+
+@Injectable()
+export class ChartService {
+  constructor(
+    @InjectRepository(Chart)
+    private readonly chartRepository: Repository<Chart>,
+    @InjectRepository(Dataset)
+    private readonly datasetRepository: Repository<Dataset>,
+  ) {}
+
+  public async getChart(user: User, id: string) {
+    const chart = await this.chartRepository.findOne({ user, id }, { relations: ['datasets'] });
+    if (!chart) {
+      throw new Error('Chart not found!');
+    }
+
+    return chart;
+  }
+
+  public async getCharts(user: User) {
+    return await this.chartRepository.find({
+      relations: ['datasets'],
+      where: {
+        user,
+      },
+    });
+  }
+
+  public async addChart(user: User, newChart: ChangeChartDTO) {
+    const chart = new Chart({ user, ...newChart });
+    const completed = !!(await this.chartRepository.save(chart));
+    const charts = await this.getCharts(user);
+    return { chart, charts, completed };
+  }
+
+  public async updateChart(user, id: string, update: ChangeChartDTO) {
+    const chart = { ...(await this.getChart(user, id)), ...update };
+    const completed = !!(await this.chartRepository.save(chart));
+    const charts = await this.getCharts(user);
+    return { chart, charts, completed };
+  }
+
+  public async deleteChart(user: User, id: string) {
+    const chart = await this.getChart(user, id);
+    const completed = !!(await this.chartRepository.delete({ user, id }));
+    const charts = await this.getCharts(user);
+    return { chart, charts, completed };
+  }
+
+  public async getDataset(user: User, chartID: string, id: string) {
+    const chart = await this.getChart(user, chartID);
+    const dataset = await this.datasetRepository.findOne({ chart, id }, { relations: ['chart'] });
+    if (!dataset) {
+      throw new Error('Dataset not found!');
+    }
+
+    return dataset;
+  }
+
+  public async getDatasets(user: User, chartID: string) {
+    const chart = await this.getChart(user, chartID);
+    return await this.datasetRepository.find({
+      relations: ['chart'],
+      where: {
+        chart,
+      },
+    });
+  }
+
+  public async addDataset(user: User, chartID: string, newDataset: ChangeDatasetDTO) {
+    const chart = await this.getChart(user, chartID);
+    const dataset = new Dataset({ ...newDataset, chart });
+    const completed = !!(await this.datasetRepository.save(dataset));
+    const datasets = await this.getDatasets(user, chartID);
+    return { dataset, datasets, completed };
+  }
+
+  public async updateDataset(user: User, chartID: string, id: string, update: ChangeDatasetDTO) {
+    const dataset = {
+      ...(await this.getDataset(user, chartID, id)),
+      ...update,
+    };
+    const completed = !!(await this.datasetRepository.save(dataset));
+    const datasets = await this.getDatasets(user, chartID);
+    return { dataset, datasets, completed };
+  }
+
+  public async deleteDataset(user: User, chartID: string, id: string) {
+    const dataset = await this.getDataset(user, chartID, id);
+    const completed = !!(await this.datasetRepository.delete({ id }));
+    const datasets = await this.getDatasets(user, chartID);
+    return { dataset, datasets, completed };
+  }
+}

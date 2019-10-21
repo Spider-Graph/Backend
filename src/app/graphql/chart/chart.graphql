@@ -1,0 +1,53 @@
+directive @isAuthenticated on FIELD | FIELD_DEFINITION
+
+input ChangeChart {
+  title: String!
+  labels: [String!]
+}
+
+input ChangeDataset {
+  label: String!
+  values: [Int!]
+}
+
+type ChartChangeResponse {
+  chart: Chart!
+  charts: [Chart!]
+  completed: Boolean!
+}
+
+type DatasetChangeResponse {
+  dataset: Dataset!
+  datasets: [Dataset!]
+  completed: Boolean!
+}
+
+type Chart {
+  id: String!
+  title: String!
+  labels: [String!]
+  datasets: [Dataset]
+}
+
+type Dataset {
+  id: String!
+  label: String!
+  values: [Int!]
+}
+
+type Query {
+  chart(id: String!): Chart @isAuthenticated
+  charts: [Chart!] @isAuthenticated
+  dataset(chart: String!, id: String!): Dataset @isAuthenticated
+  datasets(chart: String!): [Dataset!] @isAuthenticated
+}
+
+type Mutation {
+  addChart(chart: ChangeChart!): ChartChangeResponse! @isAuthenticated
+  updateChart(id: String!, chart: ChangeChart!): ChartChangeResponse! @isAuthenticated
+  deleteChart(id: String!): ChartChangeResponse! @isAuthenticated
+  addDataset(chart: String!, dataset: ChangeDataset!): DatasetChangeResponse! @isAuthenticated
+  updateDataset(chart: String!, id: String!, dataset: ChangeDataset!): DatasetChangeResponse!
+    @isAuthenticated
+  deleteDataset(chart: String!, id: String!): DatasetChangeResponse! @isAuthenticated
+}
