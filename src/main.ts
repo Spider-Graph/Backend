@@ -9,6 +9,7 @@ import * as express from 'express';
 import { Express } from 'express';
 
 import * as compression from 'compression';
+import * as cors from 'cors';
 import * as rateLimit from 'express-rate-limit';
 import * as helmet from 'helmet';
 
@@ -19,10 +20,11 @@ const server = express();
 const createNestServer = async (expressInstance: Express) => {
   const app = await NestFactory.create<NestExpressApplication>(
     AppModule,
-    new ExpressAdapter(expressInstance)
+    new ExpressAdapter(expressInstance),
   );
 
   app.use(compression());
+  app.use(cors());
   app.use(helmet());
   // app.use(
   //   new rateLimit({
