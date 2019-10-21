@@ -40,8 +40,10 @@ export class ChartService {
     return { chart, charts, completed };
   }
 
-  public async updateChart(user, id: string, update: ChangeChartDTO) {
-    const chart = { ...(await this.getChart(user, id)), ...update };
+  public async updateChart(user: User, id: string, update: ChangeChartDTO) {
+    const currentChart = await this.getChart(user, id);
+    const chart = { ...currentChart, ...update };
+    chart.datasets = this.updateChartDatasets(chart);
     const completed = !!(await this.chartRepository.save(chart));
     const charts = await this.getCharts(user);
     return { chart, charts, completed };
@@ -49,6 +51,7 @@ export class ChartService {
 
   public async deleteChart(user: User, id: string) {
     const chart = await this.getChart(user, id);
+    chart.datasets.forEach(dataset => this.deleteDataset(user, id, dataset.id));
     const completed = !!(await this.chartRepository.delete({ user, id }));
     const charts = await this.getCharts(user);
     return { chart, charts, completed };
@@ -76,17 +79,20 @@ export class ChartService {
 
   public async addDataset(user: User, chartID: string, newDataset: ChangeDatasetDTO) {
     const chart = await this.getChart(user, chartID);
-    const dataset = new Dataset({ ...newDataset, chart });
+    const label = newDataset.label;
+    const values = this.updateValuesLength(newDataset.values, chart.labels.length);
+    const dataset = new Dataset({ chart, label, values });
     const completed = !!(await this.datasetRepository.save(dataset));
     const datasets = await this.getDatasets(user, chartID);
     return { dataset, datasets, completed };
   }
 
   public async updateDataset(user: User, chartID: string, id: string, update: ChangeDatasetDTO) {
-    const dataset = {
-      ...(await this.getDataset(user, chartID, id)),
-      ...update,
-    };
+    const chart = await this.getChart(user, chartID);
+    const label = update.label;
+    const values = this.updateValuesLength(update.values, chart.labels.length);
+    const currentDataset = await this.getDataset(user, chartID, id);
+    const dataset = { ...currentDataset, label, values };
     const completed = !!(await this.datasetRepository.save(dataset));
     const datasets = await this.getDatasets(user, chartID);
     return { dataset, datasets, completed };
@@ -97,5 +103,20 @@ export class ChartService {
     const completed = !!(await this.datasetRepository.delete({ id }));
     const datasets = await this.getDatasets(user, chartID);
     return { dataset, datasets, completed };
+  }
+
+  private updateChartDatasets(chart: Chart) {
+    return chart.datasets.map(dataset => {
+      dataset.values = this.updateValuesLength(dataset.values, chart.labels.length);
+      this.datasetRepository.save(dataset);
+      return dataset;
+    });
+  }
+
+  private updateValuesLength(values: number[], chartLength: number) {
+    const update = [...values];
+    update.length = chartLength;
+    update.fill(0, values.length, chartLength);
+    return update;
   }
 }

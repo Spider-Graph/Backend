@@ -32,7 +32,7 @@ export class Chart extends ChartDTO {
   user: User;
 
   @BeforeInsert()
-  public async beforeInsert() {
+  public async beforeInsert?() {
     this.id = uuid.v1();
   }
 }
@@ -61,7 +61,7 @@ export class Dataset extends DatasetDTO {
   chart: Chart;
 
   @BeforeInsert()
-  public async beforeInsert() {
+  public async beforeInsert?() {
     this.id = uuid.v1();
   }
 }
