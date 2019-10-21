@@ -9,9 +9,6 @@ export class UserDTO {
   @IsString()
   @IsNotEmpty()
   email: string;
-
-  createdAt: string;
-  updatedAt: string;
 }
 
 export class CredentialsDTO {
