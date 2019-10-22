@@ -20,10 +20,6 @@ export class ChartDTO {
 export class DatasetDTO {
   @IsString()
   @IsNotEmpty()
-  id: string;
-
-  @IsString()
-  @IsNotEmpty()
   label: string;
 
   @IsArray()
