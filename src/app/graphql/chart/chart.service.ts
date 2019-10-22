@@ -79,9 +79,14 @@ export class ChartService {
 
   public async addDataset(user: User, chartID: string, newDataset: ChangeDatasetDTO) {
     const chart = await this.getChart(user, chartID);
-    const label = newDataset.label;
+    const { label } = newDataset;
+
+    if (await this.datasetRepository.findOne({ chart, label }, { relations: ['chart'] })) {
+      throw new Error('Existing dataset with that Label');
+    }
+
     const data = this.updateDataLength(newDataset.data, chart.labels.length);
-    const dataset = new Dataset({ chart, label, data });
+    const dataset = new Dataset({ chart, ...newDataset, data });
     const completed = !!(await this.datasetRepository.save(dataset));
     const datasets = await this.getDatasets(user, chartID);
     return { dataset, datasets, completed };
@@ -89,10 +94,9 @@ export class ChartService {
 
   public async updateDataset(user: User, chartID: string, id: string, update: ChangeDatasetDTO) {
     const chart = await this.getChart(user, chartID);
-    const label = update.label;
     const data = this.updateDataLength(update.data, chart.labels.length);
     const currentDataset = await this.getDataset(user, chartID, id);
-    const dataset = { ...currentDataset, label, data };
+    const dataset = { ...currentDataset, ...update, data };
     const completed = !!(await this.datasetRepository.save(dataset));
     const datasets = await this.getDatasets(user, chartID);
     return { dataset, datasets, completed };

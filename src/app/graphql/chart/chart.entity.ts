@@ -1,5 +1,5 @@
 // tslint:disable: max-classes-per-file
-import { BeforeInsert, Column, Entity, ManyToOne, OneToMany, PrimaryColumn } from 'typeorm';
+import { BeforeInsert, PrimaryColumn, Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 import uuid = require('uuid');
 
 import { ChartDTO, DatasetDTO } from '../../../interfaces';
