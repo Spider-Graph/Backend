@@ -27,7 +27,7 @@ export class DatasetDTO {
   label: string;
 
   @IsArray()
-  values: number[];
+  data: number[];
 
   @IsNotEmptyObject()
   chart: ChartDTO;
@@ -48,7 +48,7 @@ export class ChangeDatasetDTO {
   label: string;
 
   @IsArray()
-  values: number[];
+  data: number[];
 }
 
 export class ChartChangeResponseDTO {

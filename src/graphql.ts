@@ -12,7 +12,7 @@ export class ChangeChart {
 
 export class ChangeDataset {
     label: string;
-    values?: number[];
+    data?: number[];
 }
 
 export class Credentials {
@@ -42,7 +42,7 @@ export class ChartChangeResponse {
 export class Dataset {
     id: string;
     label: string;
-    values?: number[];
+    data?: number[];
 }
 
 export class DatasetChangeResponse {

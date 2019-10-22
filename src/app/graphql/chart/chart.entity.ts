@@ -39,12 +39,12 @@ export class Chart extends ChartDTO {
 
 @Entity()
 export class Dataset extends DatasetDTO {
-  public constructor(data?: { label: string; values: number[]; chart: Chart }) {
+  public constructor(options?: { label: string; data: number[]; chart: Chart }) {
     super();
-    if (data) {
-      this.label = data.label;
-      this.values = data.values;
-      this.chart = data.chart;
+    if (options) {
+      this.label = options.label;
+      this.data = options.data;
+      this.chart = options.chart;
     }
   }
 
@@ -55,7 +55,7 @@ export class Dataset extends DatasetDTO {
   label: string;
 
   @Column('simple-array')
-  values: number[];
+  data: number[];
 
   @ManyToOne(type => Chart, chart => chart.datasets)
   chart: Chart;

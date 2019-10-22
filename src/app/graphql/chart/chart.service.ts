@@ -80,8 +80,8 @@ export class ChartService {
   public async addDataset(user: User, chartID: string, newDataset: ChangeDatasetDTO) {
     const chart = await this.getChart(user, chartID);
     const label = newDataset.label;
-    const values = this.updateValuesLength(newDataset.values, chart.labels.length);
-    const dataset = new Dataset({ chart, label, values });
+    const data = this.updateDataLength(newDataset.data, chart.labels.length);
+    const dataset = new Dataset({ chart, label, data });
     const completed = !!(await this.datasetRepository.save(dataset));
     const datasets = await this.getDatasets(user, chartID);
     return { dataset, datasets, completed };
@@ -90,9 +90,9 @@ export class ChartService {
   public async updateDataset(user: User, chartID: string, id: string, update: ChangeDatasetDTO) {
     const chart = await this.getChart(user, chartID);
     const label = update.label;
-    const values = this.updateValuesLength(update.values, chart.labels.length);
+    const data = this.updateDataLength(update.data, chart.labels.length);
     const currentDataset = await this.getDataset(user, chartID, id);
-    const dataset = { ...currentDataset, label, values };
+    const dataset = { ...currentDataset, label, data };
     const completed = !!(await this.datasetRepository.save(dataset));
     const datasets = await this.getDatasets(user, chartID);
     return { dataset, datasets, completed };
@@ -107,16 +107,16 @@ export class ChartService {
 
   private updateChartDatasets(chart: Chart) {
     return chart.datasets.map(dataset => {
-      dataset.values = this.updateValuesLength(dataset.values, chart.labels.length);
+      dataset.data = this.updateDataLength(dataset.data, chart.labels.length);
       this.datasetRepository.save(dataset);
       return dataset;
     });
   }
 
-  private updateValuesLength(values: number[], chartLength: number) {
-    const update = [...values];
+  private updateDataLength(data: number[], chartLength: number) {
+    const update = [...data];
     update.length = chartLength;
-    update.fill(0, values.length, chartLength);
+    update.fill(0, data.length, chartLength);
     return update;
   }
 }

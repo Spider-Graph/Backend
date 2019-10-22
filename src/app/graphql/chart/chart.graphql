@@ -7,7 +7,7 @@ input ChangeChart {
 
 input ChangeDataset {
   label: String!
-  values: [Int!]
+  data: [Int!]
 }
 
 type ChartChangeResponse {
@@ -32,7 +32,7 @@ type Chart {
 type Dataset {
   id: String!
   label: String!
-  values: [Int!]
+  data: [Int!]
 }
 
 type Query {
