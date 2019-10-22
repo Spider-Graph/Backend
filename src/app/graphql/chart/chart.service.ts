@@ -98,9 +98,15 @@ export class ChartService {
     const chart = await this.getChart(user, chartID);
     const data = this.updateDataLength(update.data, chart.labels.length);
     const currentDataset = await this.getDataset(user, chartID, label);
+
+    if (update.label !== currentDataset.label) {
+      this.deleteDataset(user, chartID, currentDataset.label);
+    }
+
     const dataset = { ...currentDataset, ...update, data };
     const completed = !!(await this.datasetRepository.save(dataset));
     const datasets = await this.getDatasets(user, chartID);
+
     return { dataset, datasets, completed };
   }
 
