@@ -7,7 +7,7 @@ input ChangeChart {
 
 input ChangeDataset {
   label: String!
-  data: [Int!]
+  data: [Float!]
 }
 
 type ChartChangeResponse {
@@ -31,7 +31,7 @@ type Chart {
 
 type Dataset {
   label: String!
-  data: [Int!]
+  data: [Float!]
 }
 
 type Query {
