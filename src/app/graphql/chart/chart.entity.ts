@@ -49,6 +49,9 @@ export class Dataset extends DatasetDTO {
   }
 
   @PrimaryColumn()
+  id: string;
+
+  @Column()
   label: string;
 
   @Column('simple-array')
@@ -56,4 +59,9 @@ export class Dataset extends DatasetDTO {
 
   @ManyToOne(type => Chart, chart => chart.datasets)
   chart: Chart;
+
+  @BeforeInsert()
+  public async beforeInsert?() {
+    this.id = uuid.v1();
+  }
 }

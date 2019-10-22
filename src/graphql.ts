@@ -40,6 +40,7 @@ export class ChartChangeResponse {
 }
 
 export class Dataset {
+    id: string;
     label: string;
     data?: number[];
 }
@@ -63,9 +64,9 @@ export abstract class IMutation {
 
     abstract addDataset(chart: string, dataset: ChangeDataset): DatasetChangeResponse | Promise<DatasetChangeResponse>;
 
-    abstract updateDataset(chart: string, label: string, dataset: ChangeDataset): DatasetChangeResponse | Promise<DatasetChangeResponse>;
+    abstract updateDataset(chart: string, id: string, dataset: ChangeDataset): DatasetChangeResponse | Promise<DatasetChangeResponse>;
 
-    abstract deleteDataset(chart: string, label: string): DatasetChangeResponse | Promise<DatasetChangeResponse>;
+    abstract deleteDataset(chart: string, id: string): DatasetChangeResponse | Promise<DatasetChangeResponse>;
 
     abstract login(credentials: Credentials): LoginResponse | Promise<LoginResponse>;
 
@@ -81,7 +82,7 @@ export abstract class IQuery {
 
     abstract charts(): Chart[] | Promise<Chart[]>;
 
-    abstract dataset(chart: string, label: string): Dataset | Promise<Dataset>;
+    abstract dataset(chart: string, id: string): Dataset | Promise<Dataset>;
 
     abstract datasets(chart: string): Dataset[] | Promise<Dataset[]>;
 

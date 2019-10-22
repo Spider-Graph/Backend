@@ -51,18 +51,15 @@ export class ChartService {
 
   public async deleteChart(user: User, id: string) {
     const chart = await this.getChart(user, id);
-    chart.datasets.forEach(dataset => this.deleteDataset(user, id, dataset.label));
+    chart.datasets.forEach(dataset => this.deleteDataset(user, id, dataset.id));
     const completed = !!(await this.chartRepository.delete({ user, id }));
     const charts = await this.getCharts(user);
     return { chart, charts, completed };
   }
 
-  public async getDataset(user: User, chartID: string, label: string) {
+  public async getDataset(user: User, chartID: string, id: string) {
     const chart = await this.getChart(user, chartID);
-    const dataset = await this.datasetRepository.findOne(
-      { chart, label },
-      { relations: ['chart'] },
-    );
+    const dataset = await this.datasetRepository.findOne({ chart, id }, { relations: ['chart'] });
     if (!dataset) {
       throw new Error('Dataset not found!');
     }
@@ -81,32 +78,29 @@ export class ChartService {
   }
 
   public async addDataset(user: User, chartID: string, newDataset: ChangeDatasetDTO) {
-    const currentDataset = await this.getDataset(user, chartID, newDataset.label);
-    if (currentDataset) {
-      throw new Error('Dataset already exist!');
-    }
-
     const chart = await this.getChart(user, chartID);
+    const label = newDataset.label;
     const data = this.updateDataLength(newDataset.data, chart.labels.length);
-    const dataset = new Dataset({ chart, ...newDataset, data });
+    const dataset = new Dataset({ chart, label, data });
     const completed = !!(await this.datasetRepository.save(dataset));
     const datasets = await this.getDatasets(user, chartID);
     return { dataset, datasets, completed };
   }
 
-  public async updateDataset(user: User, chartID: string, label: string, update: ChangeDatasetDTO) {
+  public async updateDataset(user: User, chartID: string, id: string, update: ChangeDatasetDTO) {
     const chart = await this.getChart(user, chartID);
+    const label = update.label;
     const data = this.updateDataLength(update.data, chart.labels.length);
-    const currentDataset = await this.getDataset(user, chartID, label);
-    const dataset = { ...currentDataset, ...update, data };
+    const currentDataset = await this.getDataset(user, chartID, id);
+    const dataset = { ...currentDataset, label, data };
     const completed = !!(await this.datasetRepository.save(dataset));
     const datasets = await this.getDatasets(user, chartID);
     return { dataset, datasets, completed };
   }
 
-  public async deleteDataset(user: User, chartID: string, label: string) {
-    const dataset = await this.getDataset(user, chartID, label);
-    const completed = !!(await this.datasetRepository.delete({ label }));
+  public async deleteDataset(user: User, chartID: string, id: string) {
+    const dataset = await this.getDataset(user, chartID, id);
+    const completed = !!(await this.datasetRepository.delete({ id }));
     const datasets = await this.getDatasets(user, chartID);
     return { dataset, datasets, completed };
   }

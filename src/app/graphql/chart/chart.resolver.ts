@@ -47,9 +47,9 @@ export class ChartResolver {
   public async dataset(
     @Context('currentUser') user: User,
     @Args('chart') chart: string,
-    @Args('label') label: string,
+    @Args('id') id: string,
   ) {
-    return this.chartService.getDataset(user, chart, label);
+    return this.chartService.getDataset(user, chart, id);
   }
 
   @Query(() => [Dataset])
@@ -70,18 +70,18 @@ export class ChartResolver {
   public async updateDataset(
     @Context('currentUser') user: User,
     @Args('chart') chart: string,
-    @Args('label') label: string,
+    @Args('id') id: string,
     @Args('dataset') dataset: ChangeDatasetDTO,
   ) {
-    return this.chartService.updateDataset(user, chart, label, dataset);
+    return this.chartService.updateDataset(user, chart, id, dataset);
   }
 
   @Mutation(() => DatasetChangeResponseDTO)
   public async deleteDataset(
     @Context('currentUser') user: User,
     @Args('chart') chart: string,
-    @Args('label') label: string,
+    @Args('id') id: string,
   ) {
-    return this.chartService.deleteDataset(user, chart, label);
+    return this.chartService.deleteDataset(user, chart, id);
   }
 }

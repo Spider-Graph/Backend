@@ -30,6 +30,7 @@ type Chart {
 }
 
 type Dataset {
+  id: String!
   label: String!
   data: [Float!]
 }
@@ -37,7 +38,7 @@ type Dataset {
 type Query {
   chart(id: String!): Chart @isAuthenticated
   charts: [Chart!] @isAuthenticated
-  dataset(chart: String!, label: String!): Dataset @isAuthenticated
+  dataset(chart: String!, id: String!): Dataset @isAuthenticated
   datasets(chart: String!): [Dataset!] @isAuthenticated
 }
 
@@ -46,7 +47,7 @@ type Mutation {
   updateChart(id: String!, chart: ChangeChart!): ChartChangeResponse! @isAuthenticated
   deleteChart(id: String!): ChartChangeResponse! @isAuthenticated
   addDataset(chart: String!, dataset: ChangeDataset!): DatasetChangeResponse! @isAuthenticated
-  updateDataset(chart: String!, label: String!, dataset: ChangeDataset!): DatasetChangeResponse!
+  updateDataset(chart: String!, id: String!, dataset: ChangeDataset!): DatasetChangeResponse!
     @isAuthenticated
-  deleteDataset(chart: String!, label: String!): DatasetChangeResponse! @isAuthenticated
+  deleteDataset(chart: String!, id: String!): DatasetChangeResponse! @isAuthenticated
 }
