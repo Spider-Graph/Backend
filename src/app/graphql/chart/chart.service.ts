@@ -119,7 +119,7 @@ export class ChartService {
       throw new Error('At least three labels are required!');
     }
 
-    if (checkEmpty) {
+    if (checkEmpty(chart.labels)) {
       throw new Error('All labels must be filled in');
     }
 
