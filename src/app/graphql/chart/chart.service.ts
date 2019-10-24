@@ -112,9 +112,9 @@ export class ChartService {
   }
 
   private validateChart(chart: ChangeChartDTO) {
-    const checkDuplicates = (arr: any[]) => arr.every((item, index) => arr.indexOf(item) !== index);
+    const checkDuplicates = (arr: any[]) => arr.some((item, index) => arr.indexOf(item) !== index);
 
-    if (chart.labels.length > 3) {
+    if (chart.labels.length < 3) {
       throw new Error('At least three labels are required!');
     }
 
