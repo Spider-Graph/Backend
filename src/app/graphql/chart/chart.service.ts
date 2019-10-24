@@ -34,6 +34,7 @@ export class ChartService {
   }
 
   public async addChart(user: User, newChart: ChangeChartDTO) {
+    this.validateChart(newChart);
     const chart = new Chart({ user, ...newChart });
     const completed = !!(await this.chartRepository.save(chart));
     const charts = await this.getCharts(user);
@@ -41,6 +42,7 @@ export class ChartService {
   }
 
   public async updateChart(user: User, id: string, update: ChangeChartDTO) {
+    this.validateChart(update);
     const currentChart = await this.getChart(user, id);
     const chart = { ...currentChart, ...update };
     chart.datasets = this.updateChartDatasets(chart);
@@ -107,6 +109,18 @@ export class ChartService {
     const completed = !!(await this.datasetRepository.delete({ id }));
     const datasets = await this.getDatasets(user, chartID);
     return { dataset, datasets, completed };
+  }
+
+  private validateChart(chart: ChangeChartDTO) {
+    const checkDuplicates = (arr: any[]) => arr.every((item, index) => arr.indexOf(item) !== index);
+
+    if (chart.labels.length > 3) {
+      throw new Error('At least three labels are required!');
+    }
+
+    if (checkDuplicates(chart.labels)) {
+      throw new Error('Labels must include no duplicates!');
+    }
   }
 
   private updateChartDatasets(chart: Chart) {
