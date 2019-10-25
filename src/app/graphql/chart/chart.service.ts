@@ -101,7 +101,7 @@ export class ChartService {
       { chart, label },
       { relations: ['chart'] },
     );
-    if (existingDataset.id !== id) {
+    if (existingDataset && existingDataset.id !== id) {
       throw new Error('Existing dataset with that Label');
     }
 
