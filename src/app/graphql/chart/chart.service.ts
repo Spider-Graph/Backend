@@ -96,6 +96,15 @@ export class ChartService {
 
   public async updateDataset(user: User, chartID: string, id: string, update: ChangeDatasetDTO) {
     const chart = await this.getChart(user, chartID);
+    const { label } = update;
+    const existingDataset = await this.datasetRepository.findOne(
+      { chart, label },
+      { relations: ['chart'] },
+    );
+    if (existingDataset.id !== id) {
+      throw new Error('Existing dataset with that Label');
+    }
+
     const data = this.updateDataLength(update.data, chart.labels.length);
     const currentDataset = await this.getDataset(user, chartID, id);
     const dataset = { ...currentDataset, ...update, data };
