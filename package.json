@@ -21,7 +21,7 @@
     "apollo-cache-inmemory": "^1.6.3",
     "apollo-server-cache-memcached": "^0.6.3",
     "apollo-server-express": "^2.9.6",
-    "bcrypt": "^3.0.6",
+    "bcrypt": "^5.0.0",
     "cache-manager": "^2.10.0",
     "class-transformer": "^0.2.3",
     "class-validator": "0.10.2",
